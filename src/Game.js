@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
-import { XR, VRButton, TeleportationPlane, Controllers, RayGrab } from '@react-three/xr'
+import { XR, VRButton, TeleportationPlane, Controllers } from '@react-three/xr'
 
 export default function Game() {
     const { scene } = useGLTF("./models/ground.glb")
