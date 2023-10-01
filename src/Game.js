@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, Environment } from '@react-three/drei'
 import { XR, VRButton, TeleportationPlane, Controllers } from '@react-three/xr'
 
 export default function Game() {
@@ -14,9 +14,10 @@ export default function Game() {
                 <TeleportationPlane leftHand />
                 <group dispose={null}>
                     <primitive object={scene}>
-                        <meshBasicMaterial color="red" />
+                        <meshBasicMaterial color="orange" wireframe />
                     </primitive>
                 </group>
+                <Environment preset="sunset" background />
                 <ambientLight intensity={0.5} />
                 </XR>
             </Canvas>
