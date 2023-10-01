@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { Environment } from '@react-three/drei'
-import { XR, VRButton, TeleportationPlane, Controllersm, RayGrab } from '@react-three/xr'
+import { XR, VRButton, TeleportationPlane, Controllers, RayGrab } from '@react-three/xr'
 
 export default function Game() {
   return (
