@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber'
 import { Html, Environment, useProgress } from '@react-three/drei'
 import { XR, VRButton, TeleportationPlane, Controllers } from '@react-three/xr'
 import { Torus } from "@react-three/drei";
-import { Physics, RigidBody, CuboidCollider } from "@react-three/rapier";
+import { Physics, RigidBody } from "@react-three/rapier";
 
 function Loader() {
     const { total } = useProgress()
@@ -22,16 +22,19 @@ export default function Game() {
                     <ambientLight intensity={0.5} />
                     <XR>
                         <Controllers />
+                        <TeleportationPlane leftHand />
                         <Physics debug>
-                            <RigidBody>
-                                <TeleportationPlane leftHand />
+                            <RigidBody type="static">
+                                <mesh rotation={[-Math.PI / 2, 0, 0]}>
+                                    <planeGeometry args={[100, 100, 50, 50]} />
+                                    <meshBasicMaterial color="yellow" wireframe />
+                                </mesh>
                             </RigidBody>
                             
                             <RigidBody colliders={"hull"} restitution={2}>
                                 <Torus />
                             </RigidBody>
 
-                            <CuboidCollider position={[0, -2, 0]} args={[20, 0.5, 20]} />
                         </Physics>
                     </XR>
                 </Suspense>
