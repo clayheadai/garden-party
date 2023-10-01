@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber'
-import { XR, VRButton, TeleportationPlane, Controllers } from '@react-three/xr'
+import { Environment } from '@react-three/drei'
+import { XR, VRButton, TeleportationPlane, Controllersm, RayGrab } from '@react-three/xr'
 
 export default function Game() {
   return (
@@ -7,13 +8,16 @@ export default function Game() {
       <VRButton onError={(e) => console.error(e)} />
       <Canvas>
         <color attach="background" args={['black']} />
+        <Environment preset="city" background />
         <XR>
           <Controllers />
           <TeleportationPlane leftHand />
-          <mesh position={[1, 0, 0]}>
-            <boxGeometry args={[0.1, 0.1, 0.1]} />
-            <meshBasicMaterial color="red" />
-          </mesh>
+          <RayGrab>
+            <mesh position={[1, 0, 0]}>
+                <boxGeometry args={[0.1, 0.1, 0.1]} />
+                <meshBasicMaterial color="red" />
+            </mesh>
+          </RayGrab>
           <mesh position={[0, 1, 0]}>
             <boxGeometry args={[0.1, 0.1, 0.1]} />
             <meshBasicMaterial color="green" />
