@@ -28,17 +28,17 @@ export default function Game() {
     return (
         <div style={{height: "100vh", width: "100vw"}}>
             <VRButton onError={(e) => console.error(e)} />
-            <Canvas>
+            <Canvas shadows>
                 <color attach="background" args={['black']} />
                 <Suspense fallback={<Loader />}>
                     <Stats />
-                    <Environment files="./hdr/magic-blue.hdr" background />
-                    <Plane rotation={[-Math.PI / 2, -0.1, 0]} position={[0, 0, 0]} args={[100, 100, 100, 100]}>
-                        <meshBasicMaterial color="hotpink" />
+                    <Environment files="./hdr/green-sky.hdr" background />
+                    <Plane rotation={[-Math.PI / 2, -0.1, 0]} position={[0, 0, 0]} args={[100, 100, 100, 100]} receiveShadow>
+                        <meshBasicMaterial color="gray" />
                     </Plane>
-                    <ambientLight />
+                    <directionalLight castShadow />
                     <XR>
-                        <Rachel position={[-5, 0, -5]} rotation={[0, Math.PI / 2, 0]} />
+                        <Rachel position={[-5, 0, -5]} />
                         <Controllers />
                         <TeleportationPlane leftHand />
                         <WebControls />

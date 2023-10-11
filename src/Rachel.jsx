@@ -87,11 +87,11 @@ export function Rachel(props) {
     const posObj = player.position
     const posAvatar = group.current.position
 
-    const xDist = posObj.x - posAvatar.x;
-    const zDist = posObj.z - posAvatar.z;
-    const angle = Math.atan2(zDist, xDist) * 180 / Math.PI;
+    const xDist = posObj.x - posAvatar.x
+    const zDist = posObj.z - posAvatar.z
+    const angle = Math.atan2(zDist, xDist) * 180 / Math.PI
 
-    group.current.rotation.y = angle;
+    group.current.rotation.y = angle
   })
 
   return (
@@ -99,12 +99,12 @@ export function Rachel(props) {
       <group name="Scene">
         <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
           <primitive object={nodes.mixamorigHips} />
-          <skinnedMesh name="Ch02_Body" geometry={nodes.Ch02_Body.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Body.skeleton} />
-          <skinnedMesh name="Ch02_Cloth" geometry={nodes.Ch02_Cloth.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Cloth.skeleton} />
+          <skinnedMesh name="Ch02_Body" geometry={nodes.Ch02_Body.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Body.skeleton} castShadow/>
+          <skinnedMesh name="Ch02_Cloth" geometry={nodes.Ch02_Cloth.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Cloth.skeleton} castShadow />
           <skinnedMesh name="Ch02_Eyelashes" geometry={nodes.Ch02_Eyelashes.geometry} material={materials.Ch02_hair} skeleton={nodes.Ch02_Eyelashes.skeleton} />
-          <skinnedMesh name="Ch02_Hair" geometry={nodes.Ch02_Hair.geometry} material={materials.Ch02_hair} skeleton={nodes.Ch02_Hair.skeleton} />
-          <skinnedMesh name="Ch02_Sneakers" geometry={nodes.Ch02_Sneakers.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Sneakers.skeleton} />
-          <skinnedMesh name="Ch02_Socks" geometry={nodes.Ch02_Socks.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Socks.skeleton} />
+          <skinnedMesh name="Ch02_Hair" geometry={nodes.Ch02_Hair.geometry} material={materials.Ch02_hair} skeleton={nodes.Ch02_Hair.skeleton} castShadow />
+          <skinnedMesh name="Ch02_Sneakers" geometry={nodes.Ch02_Sneakers.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Sneakers.skeleton} castShadow />
+          <skinnedMesh name="Ch02_Socks" geometry={nodes.Ch02_Socks.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Socks.skeleton} castShadow />
         </group>
       </group>
     </group>
