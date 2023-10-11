@@ -12,22 +12,36 @@ import { createMachine, interpret } from 'xstate'
 export function Rachel(props) {
   const group = useRef()
   const { nodes, materials, animations } = useGLTF('./models/Rachel/rachel.glb')
-  const { actions, mixer } = useAnimations(animations, group)
+  const { actions } = useAnimations(animations, group)
 
   const currentState = useRef("standing")
+  const lastAction = useRef(null)
+  const activeAction = useRef(null)
 
   const walk = (context, event) => {
     if (actions?.Walking) {
-      mixer.stopAllAction()
-      actions.Walking.play()
+      lastAction.current = activeAction.current
+      if (lastAction.current) {
+        lastAction.current.fadeOut(0.2)
+      }
+      activeAction.current = actions.Walking
+      activeAction.current.reset()
+      activeAction.current.fadeIn(0.2)
+      activeAction.current.play()
     }
     currentState.current = "walking"
   }
 
   const stand = (context, event) => {
     if (actions?.StandingIdle) {
-      mixer.stopAllAction()
-      actions.StandingIdle.play()
+      lastAction.current = activeAction.current
+      if (lastAction.current) {
+        lastAction.current.fadeOut(0.5)
+      }
+      activeAction.current = actions.StandingIdle
+      activeAction.current.reset()
+      activeAction.current.fadeIn(0.5)
+      activeAction.current.play()
     }
     currentState.current = "standing"
   }
@@ -72,7 +86,7 @@ export function Rachel(props) {
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Scene">
-        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
+        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.02}>
           <primitive object={nodes.mixamorigHips} />
           <skinnedMesh name="Ch02_Body" geometry={nodes.Ch02_Body.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Body.skeleton} />
           <skinnedMesh name="Ch02_Cloth" geometry={nodes.Ch02_Cloth.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Cloth.skeleton} />

@@ -32,12 +32,12 @@ export default function Game() {
                 <color attach="background" args={['black']} />
                 <Suspense fallback={<Loader />}>
                     <Environment files="./hdr/magic-blue.hdr" background />
-                    <Plane rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]} args={[100, 100, 100, 100]}>
+                    <Plane rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} args={[100, 100, 100, 100]}>
                         <meshBasicMaterial color="hotpink" />
                     </Plane>
                     <ambientLight />
                     <XR>
-                        <Rachel position={[-5, -2, -5]} rotation={[0, Math.PI / 2, 0]} />
+                        <Rachel position={[-5, 0, -5]} rotation={[0, Math.PI / 2, 0]} />
                         <Controllers />
                         <TeleportationPlane leftHand />
                         <WebControls />
