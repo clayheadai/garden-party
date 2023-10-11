@@ -5,6 +5,7 @@ Command: npx gltfjsx@6.1.4 rachel.glb
 
 import React, { useRef, useEffect } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
 // import { Vector3 } from 'three'
 import { createMachine, interpret } from 'xstate'
 
@@ -80,10 +81,14 @@ export function Rachel(props) {
     }, 3000)
   })
 
+  useFrame((state) => {
+    group.current.lookAt(state.camera.position)
+  })
+
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Scene">
-        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
+        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.015}>
           <primitive object={nodes.mixamorigHips} />
           <skinnedMesh name="Ch02_Body" geometry={nodes.Ch02_Body.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Body.skeleton} />
           <skinnedMesh name="Ch02_Cloth" geometry={nodes.Ch02_Cloth.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Cloth.skeleton} />

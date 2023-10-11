@@ -32,7 +32,7 @@ export default function Game() {
                 <color attach="background" args={['black']} />
                 <Suspense fallback={<Loader />}>
                     <Environment files="./hdr/magic-blue.hdr" background />
-                    <Plane rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} args={[100, 100, 100, 100]}>
+                    <Plane rotation={[-Math.PI / 2, -0.1, 0]} position={[0, 0, 0]} args={[100, 100, 100, 100]}>
                         <meshBasicMaterial color="hotpink" />
                     </Plane>
                     <ambientLight />
