@@ -37,7 +37,7 @@ export default function Game() {
                     </Plane>
                     <ambientLight />
                     <XR>
-                        <Rachel position={[0, -7, 0]} />
+                        <Rachel position={[5, -7, 5]} rotation={[0, - Math.PI / 2, 0]} />
                         <Controllers />
                         <TeleportationPlane position={[0, -6.9, 0]} leftHand />
                         <WebControls />

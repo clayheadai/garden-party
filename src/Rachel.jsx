@@ -9,42 +9,6 @@ import { useGLTF, useAnimations } from '@react-three/drei'
 import { createMachine, raise } from 'xstate'
 
 
-const locomotionConfig = {
-  predictableActionArguments: true,
-  id: "locomotion",
-  initial: "standing",
-  states: {
-    standing: {
-      entry: ["prepareToStop"],
-      on: {
-        WALK: "walking",
-      },
-    },
-    walking: {
-      entry: ["prepareToWalk"],
-      on: {
-        STOP: "standing",
-      },
-    },
-  },
-}
-
-const locomotionOptions = {
-  actions: {
-    prepareToWalk: (context, event) => {
-      context.actions.StandingIdle.play()
-      setTimeout(() => {
-        raise("WALK")
-      }, 3000)
-    },
-    prepareToStop: (context, event) => {
-      context.actions.Walking.play()
-      setTimeout(() => {
-        raise("STOP")
-      }, 3000)
-    }
-  }
-}
 
 
 export function Rachel(props) {
@@ -52,9 +16,44 @@ export function Rachel(props) {
   const { nodes, materials, animations } = useGLTF('./models/Rachel/rachel.glb')
   const { actions } = useAnimations(animations, group)
 
+
   // const goalPosition = useRef(new Vector3(-10, -7, -10))
   
-  const locomotionMachine = createMachine(locomotionConfig, locomotionOptions).withContext({ actions })
+  const locomotionMachine = createMachine({
+    predictableActionArguments: true,
+    id: "locomotion",
+    initial: "standing",
+    states: {
+      standing: {
+        entry: ["prepareToStop"],
+        on: {
+          WALK: "walking",
+        },
+      },
+      walking: {
+        entry: ["prepareToWalk"],
+        on: {
+          STOP: "standing",
+        },
+      },
+    },
+  }, {
+    actions: {
+      prepareToWalk: (context, event) => {
+        actions.StandingIdle.play()
+        setTimeout(() => {
+          raise("WALK")
+        }, 3000)
+      },
+      prepareToStop: (context, event) => {
+        actions.Walking.play()
+        setTimeout(() => {
+          raise("STOP")
+        }, 3000)
+      },
+    },
+  })
+
   locomotionMachine.transition("standing", "WALK")
 
   return (
