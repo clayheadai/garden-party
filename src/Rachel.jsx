@@ -18,30 +18,27 @@ export function Rachel(props) {
   const lastAction = useRef(null)
   const activeAction = useRef(null)
 
+  const fadeTo = (action, duration) => {
+    lastAction.current = activeAction.current
+    if (lastAction.current) {
+      lastAction.current.fadeOut(duration)
+    }
+    activeAction.current = action
+    activeAction.current.reset()
+    activeAction.current.fadeIn(duration)
+    activeAction.current.play()
+  }
+
   const walk = (context, event) => {
     if (actions?.Walking) {
-      lastAction.current = activeAction.current
-      if (lastAction.current) {
-        lastAction.current.fadeOut(0.2)
-      }
-      activeAction.current = actions.Walking
-      activeAction.current.reset()
-      activeAction.current.fadeIn(0.2)
-      activeAction.current.play()
+      fadeTo(actions.Walking, 0.5)
     }
     currentState.current = "walking"
   }
 
   const stand = (context, event) => {
     if (actions?.StandingIdle) {
-      lastAction.current = activeAction.current
-      if (lastAction.current) {
-        lastAction.current.fadeOut(0.5)
-      }
-      activeAction.current = actions.StandingIdle
-      activeAction.current.reset()
-      activeAction.current.fadeIn(0.5)
-      activeAction.current.play()
+      fadeTo(actions.StandingIdle, 0.5)
     }
     currentState.current = "standing"
   }
@@ -86,7 +83,7 @@ export function Rachel(props) {
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Scene">
-        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.009}>
+        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
           <primitive object={nodes.mixamorigHips} />
           <skinnedMesh name="Ch02_Body" geometry={nodes.Ch02_Body.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Body.skeleton} />
           <skinnedMesh name="Ch02_Cloth" geometry={nodes.Ch02_Cloth.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Cloth.skeleton} />
