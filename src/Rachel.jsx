@@ -6,6 +6,7 @@ Command: npx gltfjsx@6.1.4 rachel.glb
 import React, { useRef, useEffect } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import { useXR } from '@react-three/xr'
 // import { Vector3 } from 'three'
 import { createMachine, interpret } from 'xstate'
 
@@ -14,6 +15,7 @@ export function Rachel(props) {
   const group = useRef()
   const { nodes, materials, animations } = useGLTF('./models/Rachel/rachel.glb')
   const { actions } = useAnimations(animations, group)
+  const { player } = useXR()
 
   const currentState = useRef("standing")
   const lastAction = useRef(null)
@@ -82,9 +84,9 @@ export function Rachel(props) {
   })
 
   useFrame((state, delta) => {
-    const posObj = state.camera.position
+    const posObj = player.position
     const posAvatar = group.current.position
-    
+
     const xDist = posObj.x - posAvatar.x;
     const zDist = posObj.z - posAvatar.z;
     const angle = Math.atan2(zDist, xDist) * 180 / Math.PI;
