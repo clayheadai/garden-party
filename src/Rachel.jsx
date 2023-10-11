@@ -86,7 +86,7 @@ export function Rachel(props) {
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Scene">
-        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.09}>
+        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.009}>
           <primitive object={nodes.mixamorigHips} />
           <skinnedMesh name="Ch02_Body" geometry={nodes.Ch02_Body.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Body.skeleton} />
           <skinnedMesh name="Ch02_Cloth" geometry={nodes.Ch02_Cloth.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Cloth.skeleton} />
