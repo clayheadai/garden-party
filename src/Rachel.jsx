@@ -81,14 +81,21 @@ export function Rachel(props) {
     }, 3000)
   })
 
-  useFrame((state) => {
-    group.current.lookAt(state.camera.position)
+  useFrame((state, delta) => {
+    const posObj = state.camera.position
+    const posAvatar = group.current.position
+    
+    const xDist = posObj.x - posAvatar.x;
+    const zDist = posObj.z - posAvatar.z;
+    const angle = Math.atan2(zDist, xDist) * 180 / Math.PI;
+
+    group.current.rotation.y = angle;
   })
 
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Scene">
-        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.015}>
+        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
           <primitive object={nodes.mixamorigHips} />
           <skinnedMesh name="Ch02_Body" geometry={nodes.Ch02_Body.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Body.skeleton} />
           <skinnedMesh name="Ch02_Cloth" geometry={nodes.Ch02_Cloth.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Cloth.skeleton} />
