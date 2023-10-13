@@ -42,7 +42,7 @@ export default function Game() {
                     <Stats />
                     <Environment files="./hdr/sky.hdr" background />
                     <Plane rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} args={[100, 100, 100, 100]} receiveShadow>
-                        <meshBasicMaterial color="gray" />
+                        <meshBasicMaterial color="black" />
                     </Plane>
                     <ambientLight />
                     <XR>

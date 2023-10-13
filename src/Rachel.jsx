@@ -7,7 +7,6 @@ import React, { useRef, useEffect } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useXR } from '@react-three/xr'
-import { Vector3 } from 'three'
 import { createMachine, interpret } from 'xstate'
 
 
@@ -16,6 +15,8 @@ export function Rachel(props) {
   const body = useRef()
   const leftEye = useRef()
   const rightEye = useRef()
+
+  // const focusObject = useRef()
 
   const { nodes, materials, animations } = useGLTF('./models/Rachel/rachel.glb')
   const { actions } = useAnimations(animations, group)
@@ -57,11 +58,6 @@ export function Rachel(props) {
     }, 100)
   }
 
-  const lookAt = (location) => {
-    // leftEye.current.
-    // rightEye.current.geometry.applyQuaternion([Math.random(), Math.random(), Math.random(), Math.random()])
-  }
-
   // const goalPosition = useRef(new Vector3(-10, -7, -10))
   
   const locomotionMachine = createMachine({
@@ -96,12 +92,8 @@ export function Rachel(props) {
         locomotionActor.send({ type: "STOP" })
       }
     }, 3000)
-
-    setInterval(() => {
-
-    })
   })
-  
+
   useFrame((state, delta) => {
     const posObj = isPresenting ? player.position : state.camera.position
     const posAvatar = group.current.position
@@ -116,10 +108,15 @@ export function Rachel(props) {
       blink()
     }
 
-    if (Math.random() < 0.03) {
-      const randomLoc = new Vector3(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1)
-      lookAt(randomLoc)
+    if (Math.random() < 0.005) {
+      body.current.morphTargetInfluences[0] = 1 - body.current.morphTargetInfluences[0]
     }
+
+    // if (Math.random() < 0.03) {
+    //   if (focusObject.current) {
+    //     const head = group.current.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0]
+    //   }
+    // }
 
 
   })
