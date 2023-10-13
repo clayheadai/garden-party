@@ -7,15 +7,19 @@ import React, { useRef, useEffect } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useXR } from '@react-three/xr'
-// import { Vector3 } from 'three'
+import { Vector3 } from 'three'
 import { createMachine, interpret } from 'xstate'
 
 
 export function Rachel(props) {
   const group = useRef()
+  const body = useRef()
+  const leftEye = useRef()
+  const rightEye = useRef()
+
   const { nodes, materials, animations } = useGLTF('./models/Rachel/rachel.glb')
   const { actions } = useAnimations(animations, group)
-  const { player } = useXR()
+  const { player, isPresenting } = useXR()
 
   const currentState = useRef("standing")
   const lastAction = useRef(null)
@@ -44,6 +48,18 @@ export function Rachel(props) {
       fadeTo(actions.StandingIdle, 0.5)
     }
     currentState.current = "standing"
+  }
+
+  const blink = () => {
+    body.current.morphTargetInfluences[1] = 1
+    setTimeout(() => {
+      body.current.morphTargetInfluences[1] = 0.1
+    }, 100)
+  }
+
+  const lookAt = (location) => {
+    // leftEye.current.
+    // rightEye.current.geometry.applyQuaternion([Math.random(), Math.random(), Math.random(), Math.random()])
   }
 
   // const goalPosition = useRef(new Vector3(-10, -7, -10))
@@ -79,12 +95,15 @@ export function Rachel(props) {
       } else {
         locomotionActor.send({ type: "STOP" })
       }
-      
     }, 3000)
-  })
 
+    setInterval(() => {
+
+    })
+  })
+  
   useFrame((state, delta) => {
-    const posObj = player.position
+    const posObj = isPresenting ? player.position : state.camera.position
     const posAvatar = group.current.position
 
     const xDist = posObj.x - posAvatar.x
@@ -92,6 +111,17 @@ export function Rachel(props) {
     const angle = Math.atan2(zDist, xDist) * 180 / Math.PI
 
     group.current.rotation.y = angle
+
+    if (Math.random() < 0.01) {
+      blink()
+    }
+
+    if (Math.random() < 0.03) {
+      const randomLoc = new Vector3(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1)
+      lookAt(randomLoc)
+    }
+
+
   })
 
   return (
@@ -99,12 +129,13 @@ export function Rachel(props) {
       <group name="Scene">
         <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
           <primitive object={nodes.mixamorigHips} />
-          <skinnedMesh name="Ch02_Body" geometry={nodes.Ch02_Body.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Body.skeleton} castShadow/>
-          <skinnedMesh name="Ch02_Cloth" geometry={nodes.Ch02_Cloth.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Cloth.skeleton} castShadow />
-          <skinnedMesh name="Ch02_Eyelashes" geometry={nodes.Ch02_Eyelashes.geometry} material={materials.Ch02_hair} skeleton={nodes.Ch02_Eyelashes.skeleton} />
-          <skinnedMesh name="Ch02_Hair" geometry={nodes.Ch02_Hair.geometry} material={materials.Ch02_hair} skeleton={nodes.Ch02_Hair.skeleton} castShadow />
-          <skinnedMesh name="Ch02_Sneakers" geometry={nodes.Ch02_Sneakers.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Sneakers.skeleton} castShadow />
-          <skinnedMesh name="Ch02_Socks" geometry={nodes.Ch02_Socks.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Socks.skeleton} castShadow />
+          <skinnedMesh name="Ch02_Cloth" geometry={nodes.Ch02_Cloth.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Cloth.skeleton} />
+          <skinnedMesh name="Ch02_Hair" geometry={nodes.Ch02_Hair.geometry} material={materials.Ch02_hair} skeleton={nodes.Ch02_Hair.skeleton} />
+          <skinnedMesh ref={leftEye} name="Ch02_Left_Eye" geometry={nodes.Ch02_Left_Eye.geometry} material={materials.Eyes} skeleton={nodes.Ch02_Left_Eye.skeleton} />
+          <skinnedMesh ref={rightEye} name="Ch02_Right_Eye" geometry={nodes.Ch02_Right_Eye.geometry} material={materials.Eyes} skeleton={nodes.Ch02_Right_Eye.skeleton} />
+          <skinnedMesh name="Ch02_Sneakers" geometry={nodes.Ch02_Sneakers.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Sneakers.skeleton} />
+          <skinnedMesh name="Ch02_Socks" geometry={nodes.Ch02_Socks.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Socks.skeleton} />
+          <skinnedMesh ref={body} name="Ch02_Body" geometry={nodes.Ch02_Body.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Body.skeleton} morphTargetDictionary={nodes.Ch02_Body.morphTargetDictionary} morphTargetInfluences={nodes.Ch02_Body.morphTargetInfluences} />
         </group>
       </group>
     </group>
