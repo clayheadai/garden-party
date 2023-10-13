@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
 import { Html, Environment, useProgress, PointerLockControls, Plane, Stats } from '@react-three/drei'
 import { XR, VRButton, TeleportationPlane, Controllers, useXR } from '@react-three/xr'
-import { AmbientLight, FogExp2 } from 'three'
+// import { AmbientLight, FogExp2 } from 'three'
 
 import { Rachel } from './Rachel'
 
@@ -23,10 +23,10 @@ function WebControls() {
     }
 }
 
-function Fog() {
-    const { scene } = useThree()
-    scene.fog = new FogExp2( 0x355E3B, 0.1 )
-}
+// function Fog() {
+//     const { scene } = useThree()
+//     scene.fog = new FogExp2( 0x355E3B, 0.1 )
+// }
 
 
 
