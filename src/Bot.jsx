@@ -15,7 +15,7 @@ export function Bot() {
   // const { scene } = useThree()
 
   // Load model
-  const { nodes, materials, animations } = useGLTF('./models/Bot/bot.glb')
+  const { nodes, animations } = useGLTF('./models/Bot/bot.glb')
 
   // Bones
   const head = nodes.mixamorigHead
