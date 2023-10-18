@@ -4,51 +4,79 @@ Command: npx gltfjsx@6.1.4 rachel.glb
 */
 
 import React, { useRef, useEffect } from 'react'
-import { useGLTF, useAnimations } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
-import { useXR } from '@react-three/xr'
+import { useGLTF, useAnimations, useHelper, PerspectiveCamera } from '@react-three/drei'
+import { useFrame, useThree } from '@react-three/fiber'
+import { Vector3, CameraHelper, BufferGeometry, Frustum, Matrix4, Quaternion, Object3D, Line, LineDashedMaterial } from 'three'
 import { createMachine, interpret } from 'xstate'
+import { shuffle } from 'd3'
 
 
 export function Rachel(props) {
+  const { scene } = useThree()
+
   const group = useRef()
+  const avatar = useRef()
+  const head = useRef()
   const body = useRef()
   const leftEye = useRef()
   const rightEye = useRef()
 
-  // const focusObject = useRef()
+  const povCamera = useRef()
+  // useHelper(povCamera, CameraHelper)
+
+  const mock = useRef(new Object3D())
+  scene.add(mock.current)
+
+  // Locomotion
+  const lookAtObject = useRef(null)
+  const visibleObjects = useRef([])
+  const isWalking = useRef(false)
+  const isSitting = useRef(false)
+  const isTurning= useRef(false)
+  const isIdling = useRef(false)
 
   const { nodes, materials, animations } = useGLTF('./models/Rachel/rachel.glb')
   const { actions } = useAnimations(animations, group)
-  const { player, isPresenting } = useXR()
 
-  const currentState = useRef("standing")
   const lastAction = useRef(null)
   const activeAction = useRef(null)
 
   const fadeTo = (action, duration) => {
-    lastAction.current = activeAction.current
-    if (lastAction.current) {
-      lastAction.current.fadeOut(duration)
+    if (action !== activeAction.current) {
+      lastAction.current = activeAction.current
+      if (lastAction.current) {
+        lastAction.current.fadeOut(duration)
+      }
+      activeAction.current = action
+      activeAction.current.reset()
+      activeAction.current.fadeIn(duration)
+      activeAction.current.play()
     }
-    activeAction.current = action
-    activeAction.current.reset()
-    activeAction.current.fadeIn(duration)
-    activeAction.current.play()
   }
 
-  const walk = (context, event) => {
+  const walk = () => {
     if (actions?.Walking) {
       fadeTo(actions.Walking, 0.5)
     }
-    currentState.current = "walking"
+    isIdling.current = false
+    isWalking.current = true
   }
 
-  const stand = (context, event) => {
+  const idle = () => {
     if (actions?.StandingIdle) {
       fadeTo(actions.StandingIdle, 0.5)
     }
-    currentState.current = "standing"
+    isWalking.current = false
+    isIdling.current = true
+  }
+
+  const think = () => {
+    if (actions?.Thinking) {
+      fadeTo(actions.Thinking, 0.5)
+    }
+
+    isWalking.current = false
+    isIdling.current = true
   }
 
   const blink = () => {
@@ -58,74 +86,116 @@ export function Rachel(props) {
     }, 100)
   }
 
-  // const goalPosition = useRef(new Vector3(-10, -7, -10))
+  const drawSaccadeLine = () => {
+    const start = new Vector3()
+    const end = new Vector3()
+    head.current.getWorldPosition(start)
+    lookAtObject.current.getWorldPosition(end)
+
+    const lineGeom = new BufferGeometry().setFromPoints([start, end])
+    const lineMat = new LineDashedMaterial({color: "lime"})
+    const line = new Line(lineGeom, lineMat)
+    scene.add(line)
+    setTimeout(() => {
+      scene.remove(line)
+    }, 200)
+    
+  }
+
+  const orient = (delta) => {
+    const targetPos = lookAtObject.current.position
+    const bodyCurrent = new Quaternion()
+    const bodyTarget = new Quaternion()
+    const headCurrent = new Quaternion()
+    const headTarget = new Quaternion()
+
+    // rightEye.current.applyQuaternion()
+    // Turn body
+    avatar.current.getWorldQuaternion(bodyCurrent)
+    mock.current.position.copy(avatar.current.position)
+    mock.current.lookAt(targetPos)
+    mock.current.getWorldQuaternion(bodyTarget)
+    const bodyDelta = bodyCurrent.slerp(bodyTarget, delta * 0.001)
+    avatar.current.applyQuaternion(bodyTarget)
+
+    // Turn head
+    // head.current.getWorldQuaternion(headCurrent)
+    // mock.current.position.copy(povCamera.current.position)
+    // mock.current.lookAt(targetPos)
+    // mock.current.getWorldQuaternion(headTarget)
+    // const headDelta = headCurrent.slerp(headTarget, delta * 0.001)
+    // head.current.applyQuaternion(headDelta)
+  }
+
+
   
-  const locomotionMachine = createMachine({
-    predictableActionArguments: true,
-    id: "locomotion",
-    initial: "standing",
-    states: {
-      standing: {
-        entry: ["stand"],
-        on: {
-          WALK: "walking",
-        },
-      },
-      walking: {
-        entry: ["walk"],
-        on: {
-          STOP: "standing",
-        },
-      },
-    },
-  }, {
-    actions: { walk, stand },
-  })
-
-  const locomotionActor = interpret(locomotionMachine).start()
-
   useEffect(() => {
+    // Testing animation controls
     setInterval(() => {
-      if (currentState.current === "standing") {
-        locomotionActor.send({ type: "WALK" })
+      let r = Math.random()
+      if (r < 0.33) {
+        walk()
+      } else if (r < 0.66) {
+        idle()
       } else {
-        locomotionActor.send({ type: "STOP" })
+        think()
       }
-    }, 3000)
+    }, 5000)
+
+    // Get visible objects
+    setInterval(() => {
+      const frustum = new Frustum().setFromProjectionMatrix( new Matrix4().multiplyMatrices( povCamera.current.projectionMatrix, povCamera.current.matrixWorldInverse ) )
+      visibleObjects.current = []
+      if (scene) {
+        scene.traverse( node => {
+          if (node !== avatar.current && node.parent !== avatar.current) {
+            if (node.isMesh && (frustum.containsPoint(node.position) || frustum.intersectsObject(node))) {
+              visibleObjects.current.push(node)
+            }
+          }
+        })
+      }
+    }, 2000)
+
+    // Saccade to a visible object
+    setInterval(() => {
+      const shuffled = shuffle(visibleObjects.current)
+      if (shuffled.length > 0) {
+        lookAtObject.current = shuffled[0]
+        // drawSaccadeLine()
+      }
+    }, 1000)
+
   })
 
   useFrame((state, delta) => {
-    const posObj = isPresenting ? player.position : state.camera.position
-    const posAvatar = group.current.position
+    // Make sure camera is attached to head
+    if (!head.current && avatar.current && povCamera.current) {
+      head.current = avatar.current.children[0].children[0].children[0].children[0].children[0].children[0]
+      head.current.attach(povCamera.current)
+    }
 
-    const xDist = posObj.x - posAvatar.x
-    const zDist = posObj.z - posAvatar.z
-    const angle = Math.atan2(zDist, xDist) * 180 / Math.PI
-
-    group.current.rotation.y = angle
+    if (lookAtObject.current) {
+      orient(delta)
+    }
 
     if (Math.random() < 0.01) {
       blink()
     }
 
-    if (Math.random() < 0.005) {
+    if (Math.random() < 0.006) {
       body.current.morphTargetInfluences[0] = 1 - body.current.morphTargetInfluences[0]
     }
-
-    // if (Math.random() < 0.03) {
-    //   if (focusObject.current) {
-    //     const head = group.current.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0]
-    //   }
-    // }
 
 
   })
 
   return (
-    <group ref={group} {...props} dispose={null}>
-      <group name="Scene">
-        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
+    <group ref={group} dispose={null}>
+      <group refname="Scene">
+        <group ref={avatar} name="Rachel" position={props.position} rotation={[Math.PI / 2, 0, props.rotateY]} scale={0.01}>
           <primitive object={nodes.mixamorigHips} />
+          <PerspectiveCamera ref={povCamera} name="RachelPOV" makeDefault={false} far={1000} near={0.1} fov={58.72} position={[0, 2.59, -167.45]} rotation={[Math.PI / 2, 0, Math.PI]} scale={100} />
           <skinnedMesh name="Ch02_Cloth" geometry={nodes.Ch02_Cloth.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Cloth.skeleton} />
           <skinnedMesh name="Ch02_Hair" geometry={nodes.Ch02_Hair.geometry} material={materials.Ch02_hair} skeleton={nodes.Ch02_Hair.skeleton} />
           <skinnedMesh ref={leftEye} name="Ch02_Left_Eye" geometry={nodes.Ch02_Left_Eye.geometry} material={materials.Eyes} skeleton={nodes.Ch02_Left_Eye.skeleton} />

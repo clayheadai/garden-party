@@ -4,7 +4,7 @@ Command: npx gltfjsx@6.1.4 rachel.glb
 */
 
 import React, { useRef } from 'react'
-import { useGLTF, useAnimations } from '@react-three/drei'
+import { useGLTF, PerspectiveCamera, useAnimations } from '@react-three/drei'
 
 export function Model(props) {
   const group = useRef()
@@ -13,8 +13,9 @@ export function Model(props) {
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Scene">
-        <group name="Armature" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
+        <group name="Rachel" rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
           <primitive object={nodes.mixamorigHips} />
+          <PerspectiveCamera name="RachelPOV" makeDefault={false} far={1000} near={0.1} fov={58.72} position={[0, 2.59, -167.45]} rotation={[Math.PI / 2, 0, Math.PI]} scale={100} />
           <skinnedMesh name="Ch02_Cloth" geometry={nodes.Ch02_Cloth.geometry} material={materials.Ch02_body} skeleton={nodes.Ch02_Cloth.skeleton} />
           <skinnedMesh name="Ch02_Hair" geometry={nodes.Ch02_Hair.geometry} material={materials.Ch02_hair} skeleton={nodes.Ch02_Hair.skeleton} />
           <skinnedMesh name="Ch02_Left_Eye" geometry={nodes.Ch02_Left_Eye.geometry} material={materials.Eyes} skeleton={nodes.Ch02_Left_Eye.skeleton} />
