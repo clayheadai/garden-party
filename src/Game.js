@@ -29,27 +29,27 @@ export function Walls() {
     return (
         <group>
             <RigidBody type="fixed" colliders="cuboid">
-                <mesh position={[-20, 3, 0]} castShadow receiveShadow>
+                <mesh position={[-20, 3, 0]}>
                     <boxGeometry args={[1, 6, 40]} />
-                    <meshPhysicalMaterial color="white" />
+                    <meshToonMaterial color="white" />
                 </mesh>
             </RigidBody>
             <RigidBody type="fixed" colliders="cuboid">
-                <mesh position={[0, 3, -20]} castShadow receiveShadow>
+                <mesh position={[0, 3, -20]}>
                     <boxGeometry args={[40, 6, 1]} />
-                    <meshPhysicalMaterial color="white" />
+                    <meshToonMaterial color="white" />
                 </mesh>
             </RigidBody>
             <RigidBody type="fixed" colliders="cuboid">
-                <mesh position={[20, 3, 0]} castShadow receiveShadow>
+                <mesh position={[20, 3, 0]}>
                     <boxGeometry args={[1, 6, 40]} />
-                    <meshPhysicalMaterial color="white" />
+                    <meshToonMaterial color="white" />
                 </mesh>
             </RigidBody>
             <RigidBody type="fixed" colliders="cuboid">
-                <mesh position={[0, 3, 20]} castShadow receiveShadow>
+                <mesh position={[0, 3, 20]}>
                     <boxGeometry args={[40, 6, 1]} />
-                    <meshPhysicalMaterial color="white" />
+                    <meshToonMaterial color="white" />
                 </mesh>
             </RigidBody>
         </group>
@@ -60,7 +60,7 @@ function Ball({ x, z, color, radius }) {
     return (
         <RigidBody position={[x, 10, z]} colliders="ball" restitution={1} mass={5} type="dynamic">
             <Sphere args={[radius, 12, 12]}>
-                <meshPhysicalMaterial color={color} />
+                <meshToonMaterial color={color} />
             </Sphere>
         </RigidBody>
     )
@@ -68,10 +68,10 @@ function Ball({ x, z, color, radius }) {
 
 function World() {
     const balls = []
-    for (let i=0; i < 1000; i++) {
+    for (let i=0; i < 100; i++) {
         let x = Math.random() * 36 - 18
         let z = Math.random() * 36 - 18
-        let radius = 0.5
+        let radius = Math.random() * 0.9 + 0.1
         let color = Math.random() * 0xffffff
 
         balls.push(<Ball key={i} x={x} z={z} color={color} radius={radius} />)
@@ -82,7 +82,7 @@ function World() {
             <RigidBody type="fixed">
                 <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>
                     <planeGeometry  args={[40, 40]} />
-                    <meshPhysicalMaterial color="white" />
+                    <meshToonMaterial color="white" />
                 </mesh>
             </RigidBody>
             <Walls />
@@ -96,11 +96,11 @@ export default function Game() {
     return (
         <div style={{height: "100vh", width: "100vw"}}>
             <VRButton onError={(e) => console.error(e)} />
-            <Canvas shadows>
+            <Canvas>
                 <Suspense fallback={<Loader />}>
                     <Stats />
                     <Sky sunPosition={[-0.5, 1, 0.4]} />
-                    <directionalLight intensity={2} position={[-0.5, 1, 0.4]} />
+                    {/* <directionalLight intensity={2} position={[-0.5, 1, 0.4]} /> */}
                     <ambientLight intensity={.25} />
                     <XR>
                         <Controllers />
