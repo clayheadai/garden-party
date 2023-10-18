@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
 import { Html, useProgress, PointerLockControls, Sphere, Stats, Sky } from '@react-three/drei'
-import { XR, VRButton, TeleportationPlane, Controllers, useXR } from '@react-three/xr'
+import { XR, VRButton, TeleportationPlane, Controllers, useXR, RayGrab } from '@react-three/xr'
 import { Physics, RigidBody } from '@react-three/rapier'
 
 import { Bot } from './Bot'
@@ -58,11 +58,13 @@ export function Walls() {
 
 function Ball({ x, z, color, radius }) {
     return (
-        <RigidBody position={[x, 10, z]} colliders="ball" restitution={1} mass={5} type="dynamic">
-            <Sphere args={[radius, 12, 12]}>
-                <meshToonMaterial color={color} />
-            </Sphere>
-        </RigidBody>
+        <RayGrab>
+            <RigidBody position={[x, 10, z]} colliders="ball" restitution={1} mass={5} type="dynamic">
+                <Sphere args={[radius, 12, 12]}>
+                    <meshToonMaterial color={color} />
+                </Sphere>
+            </RigidBody>
+        </RayGrab>
     )
 }
 
