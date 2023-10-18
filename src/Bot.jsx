@@ -6,13 +6,13 @@ Command: npx gltfjsx@6.1.4 bot.glb
 import React, { useRef, useEffect, useMemo } from 'react'
 import { CameraHelper, Vector3 } from 'three'
 import { useThree, useFrame } from '@react-three/fiber'
-import { useGLTF, useHelper, useAnimations, PerspectiveCamera, Capsule } from '@react-three/drei'
+import { useGLTF, useHelper, useAnimations, PerspectiveCamera } from '@react-three/drei'
 
 import { RigidBody, CapsuleCollider, vec3 } from '@react-three/rapier'
 
 
 export function Bot() {
-  const { scene } = useThree()
+  // const { scene } = useThree()
 
   // Load model
   const { nodes, materials, animations } = useGLTF('./models/Bot/bot.glb')
@@ -25,8 +25,8 @@ export function Bot() {
   const pov = useRef()
   const collider = useRef()
 
-  const velocity = useMemo(() => new Vector3(), [])
-  const direction = useMemo(() => new Vector3(), [])
+  // const velocity = useMemo(() => new Vector3(), [])
+  // const direction = useMemo(() => new Vector3(), [])
 
   // Attach POV camera only once
   if (pov.current) {
@@ -40,7 +40,7 @@ export function Bot() {
   useHelper(pov, CameraHelper)
 
   // Memory data structures
-  const visibleObjects = useRef([])
+  // const visibleObjects = useRef([])
 
   const walkFullBody = () => {
     actions.Walking_FullBody.fadeIn(0.5)

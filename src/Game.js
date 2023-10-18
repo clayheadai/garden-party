@@ -1,6 +1,6 @@
-import { Suspense, useRef, useEffect } from 'react'
+import { Suspense } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
-import { Html, Environment, useProgress, PointerLockControls, Sphere, Stats, Sky } from '@react-three/drei'
+import { Html, useProgress, PointerLockControls, Sphere, Stats, Sky } from '@react-three/drei'
 import { XR, VRButton, TeleportationPlane, Controllers, useXR } from '@react-three/xr'
 import { Physics, RigidBody } from '@react-three/rapier'
 
