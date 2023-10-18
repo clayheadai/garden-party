@@ -71,8 +71,12 @@ export function Bot() {
         <group ref={avatar} name="Bot" position={[0, -1, 0]} rotation={[Math.PI / 2, 0, Math.PI / 2]} scale={0.01}>
           <PerspectiveCamera ref={pov} near={15} far={50000} rotation={[0, Math.PI, 0]} makeDefault={false} />
           <primitive object={nodes.mixamorigHips} />
-          <skinnedMesh name="Alpha_Joints" geometry={nodes.Alpha_Joints.geometry} material={materials.Alpha_Joints_MAT} skeleton={nodes.Alpha_Joints.skeleton} />
-          <skinnedMesh name="Alpha_Surface" geometry={nodes.Alpha_Surface.geometry} material={materials.Alpha_Body_MAT} skeleton={nodes.Alpha_Surface.skeleton} />
+          <skinnedMesh name="Alpha_Joints" geometry={nodes.Alpha_Joints.geometry} skeleton={nodes.Alpha_Joints.skeleton}>
+            <meshToonMaterial color="black" />
+          </skinnedMesh>
+          <skinnedMesh name="Alpha_Surface" geometry={nodes.Alpha_Surface.geometry} skeleton={nodes.Alpha_Surface.skeleton}>
+            <meshToonMaterial color="orange" />
+          </skinnedMesh>
         </group>
       </RigidBody>
       

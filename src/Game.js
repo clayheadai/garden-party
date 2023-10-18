@@ -100,7 +100,7 @@ export default function Game() {
                 <Suspense fallback={<Loader />}>
                     <Stats />
                     <Sky sunPosition={[-0.5, 1, 0.4]} />
-                    {/* <directionalLight intensity={2} position={[-0.5, 1, 0.4]} /> */}
+                    <directionalLight intensity={2} position={[-0.5, 1, 0.4]} />
                     <ambientLight intensity={.25} />
                     <XR>
                         <Controllers />
