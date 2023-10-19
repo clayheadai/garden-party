@@ -1,10 +1,10 @@
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
-import { Html, useProgress, PointerLockControls, Sphere, Stats, Sky } from '@react-three/drei'
-import { XR, VRButton, TeleportationPlane, Controllers, useXR, RayGrab } from '@react-three/xr'
-import { Physics, RigidBody } from '@react-three/rapier'
+import { Html, useProgress, useGLTF, PointerLockControls, Stats, Stars } from '@react-three/drei'
+import { XR, VRButton, TeleportationPlane, Controllers, useXR } from '@react-three/xr'
 
 import { Bot } from './Bot'
+import useOctree from './useOctree'
 
 
 function Loader() {
@@ -25,96 +25,42 @@ function WebControls() {
 }
 
 
-export function Walls() {
-    return (
-        <group>
-            <RigidBody type="fixed" colliders="cuboid">
-                <mesh position={[-20, 3, 0]}>
-                    <boxGeometry args={[1, 6, 40]} />
-                    <meshToonMaterial color="white" />
-                </mesh>
-            </RigidBody>
-            <RigidBody type="fixed" colliders="cuboid">
-                <mesh position={[0, 3, -20]}>
-                    <boxGeometry args={[40, 6, 1]} />
-                    <meshToonMaterial color="white" />
-                </mesh>
-            </RigidBody>
-            <RigidBody type="fixed" colliders="cuboid">
-                <mesh position={[20, 3, 0]}>
-                    <boxGeometry args={[1, 6, 40]} />
-                    <meshToonMaterial color="white" />
-                </mesh>
-            </RigidBody>
-            <RigidBody type="fixed" colliders="cuboid">
-                <mesh position={[0, 3, 20]}>
-                    <boxGeometry args={[40, 6, 1]} />
-                    <meshToonMaterial color="white" />
-                </mesh>
-            </RigidBody>
-        </group>
-    )
-}
+function World({ setOctree }) {
+    const { scene } = useGLTF("./models/World/Walk in the Woods.glb")
 
-function Ball({ x, z, color, radius }) {
-    return (
-        <RayGrab>
-            <RigidBody position={[x, 10, z]} colliders="ball" restitution={1} mass={5} type="dynamic">
-                <Sphere args={[radius, 12, 12]}>
-                    <meshToonMaterial color={color} />
-                </Sphere>
-            </RigidBody>
-        </RayGrab>
-    )
-}
-
-function World() {
-    const balls = []
-    for (let i=0; i < 100; i++) {
-        let x = Math.random() * 36 - 18
-        let z = Math.random() * 36 - 18
-        let radius = Math.random() * 0.9 + 0.1
-        let color = Math.random() * 0xffffff
-
-        balls.push(<Ball key={i} x={x} z={z} color={color} radius={radius} />)
-    }
+    scene.scale.set(28, 28, 28)
+    const octree = useOctree(scene)
+    setOctree(octree)
 
     return (
         <group dispose={null}>
-            <RigidBody type="fixed">
-                <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>
-                    <planeGeometry  args={[40, 40]} />
-                    <meshToonMaterial color="white" />
-                </mesh>
-            </RigidBody>
-            <Walls />
-            {balls}
+            <primitive position={[0, 2, 0]} object={scene} />
         </group>
     )
 }
 
 
 export default function Game() {
+    const [octree, setOctree] = useState(null)
+
     return (
         <div style={{height: "100vh", width: "100vw"}}>
             <VRButton onError={(e) => console.error(e)} />
             <Canvas>
+                <color attach="background" args={["black"]} />
+                <Stars />
                 <Suspense fallback={<Loader />}>
                     <Stats />
-                    <Sky sunPosition={[-0.5, 1, 0.4]} />
                     <directionalLight intensity={2} position={[-0.5, 1, 0.4]} />
-                    <ambientLight intensity={.25} />
+                    <ambientLight intensity={.2} />
                     <XR>
                         <Controllers />
                         <TeleportationPlane leftHand />
                         <WebControls />
-                        <Physics>
-                            <World />
-                            <Bot />
-                        </Physics>
+                        <World setOctree={setOctree} />
+                        <Bot octree={octree}/>
                     </XR>
                 </Suspense>
-                
             </Canvas>
         </div>
     )

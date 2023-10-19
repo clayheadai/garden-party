@@ -7,6 +7,10 @@ tags:
   - Caddy
 ---
 
+# Models credit:
+
+- "Walk in the Woods" by Don Carson [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/38m6Q1H12DU)
+
 # Create React App
 
 This is a [Create React App](https://create-react-app.dev/) starter that uses [Caddy](https://caddyserver.com/).
